@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "h",
+    "target": "es2017",
+    "module": "commonjs",
+    "experimentalDecorators": true
+  },
+  "include": ["./src"]
+}
