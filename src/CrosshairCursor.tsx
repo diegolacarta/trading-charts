@@ -74,7 +74,7 @@ export default class CrosshairCursor extends Component<{
     )
   }
 
-  isOutOfBounds = (x, y) => {
+  isOutOfBounds = (x, y = 0) => {
     return (
       x < 0 ||
       x > chartModel.width - chartModel.margin.right ||
@@ -110,7 +110,7 @@ export default class CrosshairCursor extends Component<{
     this.props.anchorsX.forEach((anchor) => {
       const anchorX = chartModel.scaleX(anchor)
       const distance = Math.abs(anchorX - x)
-      if (distanceToClosestAnchor === undefined || distance < distanceToClosestAnchor) {
+      if (!this.isOutOfBounds(anchorX) && (distanceToClosestAnchor === undefined || distance < distanceToClosestAnchor)) {
         closestAnchorX = anchorX
         distanceToClosestAnchor = distance
       }
@@ -143,7 +143,6 @@ export default class CrosshairCursor extends Component<{
         height={chartModel.height}
         style={{
           position: 'absolute',
-          zIndex: 1000,
           pointerEvents: 'none'
         }}
         ref={this.onRef}
