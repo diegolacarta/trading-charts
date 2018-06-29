@@ -1,7 +1,9 @@
 import {Component, h} from 'preact'
 import chartModel from './chartModel'
 
-export default class CrosshairCursor extends Component {
+export default class CrosshairCursor extends Component<{
+  anchorsX: Date[]
+}> {
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
   fontSize = 11
@@ -102,6 +104,21 @@ export default class CrosshairCursor extends Component {
     }
   }
 
+  getClosestAnchorX = x => {
+    let closestAnchorX
+    let distanceToClosestAnchor
+    this.props.anchorsX.forEach((anchor) => {
+      const anchorX = chartModel.scaleX(anchor)
+      const distance = Math.abs(anchorX - x)
+      if (distanceToClosestAnchor === undefined || distance < distanceToClosestAnchor) {
+        closestAnchorX = anchorX
+        distanceToClosestAnchor = distance
+      }
+    })
+
+    return closestAnchorX
+  }
+
   onMouseMove = (event: MouseEvent) => {
     const {pageX, pageY} = event
     this.clear()
@@ -111,7 +128,8 @@ export default class CrosshairCursor extends Component {
     if (this.isOutOfBounds(x, y)) {
       return
     }
-    this.draw(x, y)
+
+    this.draw(this.getClosestAnchorX(x), y)
   }
 
   componentWillUnmount() {

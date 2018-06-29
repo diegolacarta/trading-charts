@@ -127,7 +127,7 @@ export default class App extends Component {
         <Chart appearance={{
           textColor: 'black'
         }} domainXBounds={this.state.domainXBounds} domainX={this.state.domainX} domainY={this.state.domainY} height={800} width={800}>
-          <CrosshairCursor />
+          <CrosshairCursor anchorsX={data.map(d => d.date)}/>
           {this.state.chartType === 'candlesticks' && <Candlesticks data={data.slice()} onDraw={this.onDraw}/>}
           {this.state.chartType === 'line' && <Line data={data.slice()} onDraw={this.onDraw}/>}
         </Chart>
