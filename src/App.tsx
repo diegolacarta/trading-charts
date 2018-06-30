@@ -4,6 +4,8 @@ import Candlesticks from './Candlesticks'
 import Chart from './Chart'
 import CrosshairCursor from './CrosshairCursor'
 import Line from './Line'
+import AxisY from './AxisY';
+import AxisX from './AxisX';
 
 function round(d) {
   return Math.round(100 * d) / 100
@@ -76,7 +78,7 @@ export default class App extends Component {
         date: new Date(last.date.getTime() + 60 * 60 * 24 * 1000)
       }
     ]
-
+    console.log(high, low)
     this.setState({
       data,
       domainXBounds: [data[1].date, data[data.length - 2].date]
@@ -128,6 +130,8 @@ export default class App extends Component {
           textColor: 'black'
         }} domainXBounds={this.state.domainXBounds} domainX={this.state.domainX} domainY={this.state.domainY} height={800} width={800}>
           {this.state.chartType === 'candlesticks' && <Candlesticks data={data.slice()} onDraw={this.onDraw}/>}
+          <AxisY appearance={{textColor: 'black'}}></AxisY>
+          <AxisX appearance={{textColor: 'black'}}></AxisX>
           {this.state.chartType === 'line' && <Line data={data.slice()} onDraw={this.onDraw}/>}
           <CrosshairCursor anchorsX={data.map(d => d.date)}/>
         </Chart>

@@ -48,7 +48,7 @@ class ChartModel extends EventEmitter {
   scaleY2: d3.ScaleLinear<number, number>
   domainXBounds: Date[]
   margin = {
-    right: 30,
+    right: 40,
     bottom: 20
   }
   listeners = {}
@@ -60,11 +60,11 @@ class ChartModel extends EventEmitter {
     this.scaleX = d3
       .scaleTime()
       .domain(props.domainX)
-    this.scaleX.range([0, props.width - this.margin.right])
+    this.scaleX.range([0, props.width - this.margin.right - 1])
     this.scaleY = d3
       .scaleLinear()
       .domain(props.domainY)
-      .range([props.height - this.margin.bottom, 0])
+      .range([props.height - this.margin.bottom - 1, 0])
     this.scaleX2 = this.scaleX.copy()
     this.scaleY2 = this.scaleY.copy()
   }

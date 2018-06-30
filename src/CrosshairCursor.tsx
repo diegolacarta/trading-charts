@@ -56,7 +56,7 @@ export default class CrosshairCursor extends Component<{
 
   drawLabelY = y => {
     this.canvasContext.fillStyle = this.labelBgColor
-    const labelYText = chartModel.scaleY.invert(y).toFixed(0)
+    const labelYText = chartModel.scaleY.invert(y).toFixed(1)
     const labelYWidth = this.canvasContext.measureText(labelYText).width + this.labelPadding * 2
     const labelYHeight = this.labelTextHeight + this.labelPadding * 2
     this.canvasContext.fillRect(
