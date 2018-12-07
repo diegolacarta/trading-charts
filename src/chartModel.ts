@@ -1,4 +1,4 @@
-import * as d3 from 'd3'
+import {ScaleLinear, scaleLinear, ScaleTime, scaleTime} from 'd3'
 
 export type ChartProps = {
   width: number
@@ -42,10 +42,10 @@ class ChartModel extends EventEmitter {
   height: number
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
-  scaleX: d3.ScaleTime<number, number>
-  scaleY: d3.ScaleLinear<number, number>
-  scaleX2: d3.ScaleTime<number, number>
-  scaleY2: d3.ScaleLinear<number, number>
+  scaleX: ScaleTime<number, number>
+  scaleY: ScaleLinear<number, number>
+  scaleX2: ScaleTime<number, number>
+  scaleY2: ScaleLinear<number, number>
   domainXBounds: Date[]
   margin = {
     right: 40,
@@ -57,12 +57,9 @@ class ChartModel extends EventEmitter {
     this.height = props.height
     this.width = props.width
     this.domainXBounds = props.domainXBounds
-    this.scaleX = d3
-      .scaleTime()
-      .domain(props.domainX)
+    this.scaleX = scaleTime().domain(props.domainX)
     this.scaleX.range([0, props.width - this.margin.right - 1])
-    this.scaleY = d3
-      .scaleLinear()
+    this.scaleY = scaleLinear()
       .domain(props.domainY)
       .range([props.height - this.margin.bottom - 1, 0])
     this.scaleX2 = this.scaleX.copy()

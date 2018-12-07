@@ -20,6 +20,9 @@ export default class Chart extends Component<ChartProps> {
   }
 
   componentWillReceiveProps(nextProps: ChartProps) {
+    if (this.props.height !== nextProps.height || this.props.width !== nextProps.width) {
+      chartModel.init(nextProps)
+    }
     if (this.props.domainX !== nextProps.domainX) {
       chartModel.setDomainX(nextProps.domainX)
     }

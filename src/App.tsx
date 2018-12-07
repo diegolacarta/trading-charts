@@ -1,11 +1,10 @@
-import {observer} from 'mobx-preact'
 import {Component, h} from 'preact'
+import AxisX from './AxisX'
+import AxisY from './AxisY'
 import Candlesticks from './Candlesticks'
 import Chart from './Chart'
 import CrosshairCursor from './CrosshairCursor'
 import Line from './Line'
-import AxisY from './AxisY';
-import AxisX from './AxisX';
 
 function round(d) {
   return Math.round(100 * d) / 100
@@ -44,18 +43,35 @@ for (var day = 2; day <= 100; day++) {
 
 const DISPLAY_COUNT = 30
 
-@observer
 export default class App extends Component {
   state = {
     data,
     chartType: 'candlesticks',
     domainX: [],
     domainY: [],
-    domainXBounds: [data[4].date, data[data.length - 5].date]
+    domainXBounds: [data[4].date, data[data.length - 5].date],
+    height: 0,
+    width: 0
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setDomain(this.state.data)
+    this.setDimensions()
+    window.addEventListener('resize', () => {
+      this.setDimensions()
+    })
+  }
+
+  setDimensions = () => {
+    this.setState(
+      {
+        height: document.body.clientHeight - 30,
+        width: document.body.clientWidth
+      },
+      () => {
+        this.forceUpdate()
+      }
+    )
   }
 
   addPoint = () => {
@@ -78,7 +94,6 @@ export default class App extends Component {
         date: new Date(last.date.getTime() + 60 * 60 * 24 * 1000)
       }
     ]
-    console.log(high, low)
     this.setState({
       data,
       domainXBounds: [data[1].date, data[data.length - 2].date]
@@ -114,26 +129,39 @@ export default class App extends Component {
     const {data} = this.state
     return (
       <div>
-        <style dangerouslySetInnerHTML={{__html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           html {
             height: 100%;
           }
           body {
-            min-height: 100%;
+            height: 100%;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
           }
-        `}} />
-        <Chart appearance={{
-          textColor: 'black'
-        }} domainXBounds={this.state.domainXBounds} domainX={this.state.domainX} domainY={this.state.domainY} height={800} width={800}>
-          {this.state.chartType === 'candlesticks' && <Candlesticks data={data.slice()} onDraw={this.onDraw}/>}
-          <AxisY appearance={{textColor: 'black'}}></AxisY>
-          <AxisX appearance={{textColor: 'black'}}></AxisX>
-          {this.state.chartType === 'line' && <Line data={data.slice()} onDraw={this.onDraw}/>}
-          <CrosshairCursor anchorsX={data.map(d => d.date)}/>
+        `
+          }}
+        />
+        <Chart
+          appearance={{
+            textColor: 'black'
+          }}
+          domainXBounds={this.state.domainXBounds}
+          domainX={this.state.domainX}
+          domainY={this.state.domainY}
+          height={this.state.height}
+          width={this.state.width}
+        >
+          {this.state.chartType === 'candlesticks' && (
+            <Candlesticks data={data.slice()} onDraw={this.onDraw} />
+          )}
+          <AxisY appearance={{textColor: 'black'}} />
+          <AxisX appearance={{textColor: 'black'}} />
+          {this.state.chartType === 'line' && <Line data={data.slice()} onDraw={this.onDraw} />}
+          <CrosshairCursor anchorsX={data.map(d => d.date)} />
         </Chart>
         <button onClick={this.addPoint}>Add point</button>
         <button onClick={this.setChartType('candlesticks')}>Candlesticks</button>
