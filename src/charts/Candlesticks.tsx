@@ -1,6 +1,7 @@
 import {Component, h} from 'preact'
 import chart from '../models/chart'
 import {OnDraw} from '../models/types'
+import Canvas from '../components/Canvas';
 
 export default class Candlesticks extends Component<{
   data: any[]
@@ -10,13 +11,13 @@ export default class Candlesticks extends Component<{
   canvasContext: CanvasRenderingContext2D
   wickWidth = 2
 
-  componentWillReceiveProps(nextProps) {
-    this.draw(nextProps)
-  }
-
-  init = () => {
+  componentDidMount() {
     chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.draw(nextProps)
   }
 
   onDomainChange = () => {
@@ -75,7 +76,6 @@ export default class Candlesticks extends Component<{
     if (canvas) {
       this.canvas = canvas
       this.canvasContext = this.canvas.getContext('2d')
-      this.init()
     }
   }
 
@@ -85,14 +85,14 @@ export default class Candlesticks extends Component<{
 
   render() {
     return (
-      <canvas
+      <Canvas
         width={chart.width - chart.margin.right - 1}
         height={chart.height - chart.margin.bottom - 1}
         style={{
           position: 'absolute',
           pointerEvents: 'none'
         }}
-        ref={this.onRef}
+        innerRef={this.onRef}
       />
     )
   }

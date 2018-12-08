@@ -1,6 +1,7 @@
 import {Component, h} from 'preact'
 import chart from '../models/chart'
 import {Data, OnDraw} from '../models/types'
+import Canvas from '../components/Canvas';
 
 export type Appearance = {
   color?: string
@@ -16,7 +17,7 @@ export default class Line extends Component<{
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
 
-  init = () => {
+  componentDidMount() {
     chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
@@ -91,7 +92,6 @@ export default class Line extends Component<{
     if (canvas) {
       this.canvas = canvas
       this.canvasContext = this.canvas.getContext('2d')
-      this.init()
     }
   }
 
@@ -101,14 +101,14 @@ export default class Line extends Component<{
 
   render() {
     return (
-      <canvas
+      <Canvas
         width={chart.width - chart.margin.right - 1}
         height={chart.height - chart.margin.bottom - 1}
         style={{
           position: 'absolute',
           pointerEvents: 'none'
         }}
-        ref={this.onRef}
+        innerRef={this.onRef}
       />
     )
   }

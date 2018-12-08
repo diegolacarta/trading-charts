@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
 import chartModel from '../models/chart'
+import Canvas from './Canvas';
 
 export default class AxisY extends Component<{
   appearance: {
@@ -13,7 +14,7 @@ export default class AxisY extends Component<{
     this.draw(nextProps)
   }
 
-  init = () => {
+  componentDidMount() {
     chartModel.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
@@ -65,7 +66,6 @@ export default class AxisY extends Component<{
     if (canvas) {
       this.canvas = canvas
       this.canvasContext = this.canvas.getContext('2d')
-      this.init()
     }
   }
 
@@ -75,10 +75,10 @@ export default class AxisY extends Component<{
 
   render() {
     return (
-      <canvas
+      <Canvas
         width={chartModel.width}
         height={chartModel.height}
-        ref={this.onCanvasRef}
+        innerRef={this.onCanvasRef}
         style={{position: 'absolute', pointerEvents: 'none'}}
       />
     )

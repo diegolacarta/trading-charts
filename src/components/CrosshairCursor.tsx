@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
 import chartModel from '../models/chart'
+import Canvas from './Canvas'
 
 export default class CrosshairCursor extends Component<{
   anchorsX: Date[]
@@ -11,6 +12,12 @@ export default class CrosshairCursor extends Component<{
   labelBgColor = 'red'
   labelPadding = 2
   labelTextHeight = this.fontSize - 3
+
+  componentDidMount() {
+    this.canvasContext.setLineDash([5, 3])
+    this.canvasContext.font = `${this.fontSize}px Arial`
+    window.addEventListener('mousemove', this.onMouseMove)
+  }
 
   clear = () => {
     this.canvasContext.clearRect(0, 0, chartModel.width, chartModel.height)
@@ -90,27 +97,23 @@ export default class CrosshairCursor extends Component<{
     this.drawLabelY(y)
   }
 
-  init = () => {
-    this.canvasContext.setLineDash([5, 3])
-    this.canvasContext.font = `${this.fontSize}px Arial`
-    window.addEventListener('mousemove', this.onMouseMove)
-  }
-
   onRef = canvas => {
     if (canvas) {
       this.canvas = canvas
       this.canvasContext = this.canvas.getContext('2d')
-      this.init()
     }
   }
 
   getClosestAnchorX = x => {
     let closestAnchorX
     let distanceToClosestAnchor
-    this.props.anchorsX.forEach((anchor) => {
+    this.props.anchorsX.forEach(anchor => {
       const anchorX = chartModel.scaleX(anchor)
       const distance = Math.abs(anchorX - x)
-      if (!this.isOutOfBounds(anchorX) && (distanceToClosestAnchor === undefined || distance < distanceToClosestAnchor)) {
+      if (
+        !this.isOutOfBounds(anchorX) &&
+        (distanceToClosestAnchor === undefined || distance < distanceToClosestAnchor)
+      ) {
         closestAnchorX = anchorX
         distanceToClosestAnchor = distance
       }
@@ -138,14 +141,14 @@ export default class CrosshairCursor extends Component<{
 
   render() {
     return (
-      <canvas
+      <Canvas
         width={chartModel.width}
         height={chartModel.height}
         style={{
           position: 'absolute',
           pointerEvents: 'none'
         }}
-        ref={this.onRef}
+        innerRef={this.onRef}
       />
     )
   }
