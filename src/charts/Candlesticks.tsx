@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
-import chartModel, {OnDraw} from './chartModel'
+import chart from '../models/chart'
+import {OnDraw} from '../models/types'
 
 export default class Candlesticks extends Component<{
   data: any[]
@@ -14,7 +15,7 @@ export default class Candlesticks extends Component<{
   }
 
   init = () => {
-    chartModel.on('domainChange', this.onDomainChange)
+    chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
 
@@ -23,7 +24,7 @@ export default class Candlesticks extends Component<{
   }
 
   clear = () => {
-    this.canvasContext.clearRect(0, 0, chartModel.width, chartModel.height)
+    this.canvasContext.clearRect(0, 0, chart.width, chart.height)
   }
 
   draw = props => {
@@ -37,18 +38,18 @@ export default class Candlesticks extends Component<{
 
   drawCandlestick = props => item => {
     this.canvasContext.beginPath()
-    const x = chartModel.scaleX(item.date)
-    const low = chartModel.scaleY(item.low)
-    const high = chartModel.scaleY(item.high)
-    const open = chartModel.scaleY(item.open)
-    const close = chartModel.scaleY(item.close)
+    const x = chart.scaleX(item.date)
+    const low = chart.scaleY(item.low)
+    const high = chart.scaleY(item.high)
+    const open = chart.scaleY(item.open)
+    const close = chart.scaleY(item.close)
     this.canvasContext.fillStyle = item.close >= item.open ? 'green' : 'red'
     const wickX = x - this.wickWidth / 2
     const candlestickWidth = this.getCandlestickWidth(props)
     this.canvasContext.rect(x - candlestickWidth / 2, open, candlestickWidth, close - open)
     const wickWidth = Math.min(
       this.wickWidth,
-      this.wickWidth / 2 + chartModel.width - chartModel.margin.right - x
+      this.wickWidth / 2 + chart.width - chart.margin.right - x
     )
     this.canvasContext.rect(wickX, low, wickWidth, Math.max(open, close) - low)
     this.canvasContext.rect(wickX, high, wickWidth, Math.min(open, close) - high)
@@ -56,8 +57,8 @@ export default class Candlesticks extends Component<{
   }
 
   getCandlestickWidth(props) {
-    const x00 = chartModel.scaleX(props.data[0].date)
-    const x11 = chartModel.scaleX(props.data[props.data.length - 1].date)
+    const x00 = chart.scaleX(props.data[0].date)
+    const x11 = chart.scaleX(props.data[props.data.length - 1].date)
     const width = (x11 - x00) / props.data.length
 
     return width * 0.8
@@ -65,8 +66,8 @@ export default class Candlesticks extends Component<{
 
   calculatePlotData = data => {
     return data.filter(item => {
-      const x = chartModel.scaleX(item.date)
-      return x >= chartModel.scaleX.range()[0] && x <= chartModel.scaleX.range()[1]
+      const x = chart.scaleX(item.date)
+      return x >= chart.scaleX.range()[0] && x <= chart.scaleX.range()[1]
     })
   }
 
@@ -79,14 +80,14 @@ export default class Candlesticks extends Component<{
   }
 
   componentWillUnmount() {
-    chartModel.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.onDomainChange)
   }
 
   render() {
     return (
       <canvas
-        width={chartModel.width - chartModel.margin.right - 1}
-        height={chartModel.height - chartModel.margin.bottom - 1}
+        width={chart.width - chart.margin.right - 1}
+        height={chart.height - chart.margin.bottom - 1}
         style={{
           position: 'absolute',
           pointerEvents: 'none'

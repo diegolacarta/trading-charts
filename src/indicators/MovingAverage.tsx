@@ -1,12 +1,13 @@
 import {Component, h} from 'preact'
 import MovingAverageCalculator, {Options} from '../calculators/MovingAverage'
-import {Data, OnDraw} from '../chartModel'
-import Line from '../Line'
+import Line, {Appearance} from '../charts/Line'
+import { Data, OnDraw } from '../models/types';
 
 export default class MovingAverage extends Component<{
   options?: Options
   data: Data
   onDraw: OnDraw
+  appearance?: Appearance
 }> {
   state = {
     data: []
@@ -28,6 +29,13 @@ export default class MovingAverage extends Component<{
   }
 
   render() {
-    return <Line data={this.state.data} yAccessor={item => item.value} onDraw={this.props.onDraw} />
+    return (
+      <Line
+        data={this.state.data}
+        yAccessor={item => item.value}
+        onDraw={this.props.onDraw}
+        appearance={this.props.appearance}
+      />
+    )
   }
 }

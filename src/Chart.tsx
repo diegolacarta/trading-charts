@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
-import chartModel, {ChartProps} from './chartModel'
+import chart from './models/chart'
+import {ChartProps} from './models/types'
 
 export default class Chart extends Component<ChartProps> {
   appliedTransform: any
@@ -11,24 +12,24 @@ export default class Chart extends Component<ChartProps> {
   }
 
   componentWillMount() {
-    chartModel.init(this.props)
+    chart.init(this.props)
   }
 
   componentWillReceiveProps(nextProps: ChartProps) {
     if (this.props.height !== nextProps.height || this.props.width !== nextProps.width) {
-      chartModel.init(nextProps)
+      chart.init(nextProps)
     }
     if (this.props.domainX !== nextProps.domainX) {
-      chartModel.setDomainX(nextProps.domainX)
+      chart.setDomainX(nextProps.domainX)
     }
 
     if (this.props.domainY !== nextProps.domainY) {
-      chartModel.setDomainY(nextProps.domainY)
+      chart.setDomainY(nextProps.domainY)
     }
   }
 
   clear = () => {
-    chartModel.canvasContext.clearRect(0, 0, this.props.width, this.props.height)
+    chart.canvasContext.clearRect(0, 0, this.props.width, this.props.height)
   }
 
   isOutOfBounds = domain => {
@@ -39,19 +40,19 @@ export default class Chart extends Component<ChartProps> {
   }
 
   onCanvasRef = canvas => {
-    chartModel.setCanvas(canvas)
+    chart.setCanvas(canvas)
 
-    chartModel.canvas.addEventListener('wheel', (event: WheelEvent) => {
+    chart.canvas.addEventListener('wheel', (event: WheelEvent) => {
       const {deltaY, deltaX} = event
       const transformZ = Math.min(3, Math.max(0.2, this.transformZ - deltaY / 100))
       const transformX = Math.min(1000, Math.max(-1000, this.transformX + deltaX * 10))
-      const domain = chartModel.scaleX2
+      const domain = chart.scaleX2
         .copy()
         .domain(
-          chartModel.scaleX2
+          chart.scaleX2
             .range()
             .map(x => (x + transformX) / transformZ)
-            .map(chartModel.scaleX2.invert, chartModel.scaleX2)
+            .map(chart.scaleX2.invert, chart.scaleX2)
         )
         .domain()
 
@@ -61,11 +62,11 @@ export default class Chart extends Component<ChartProps> {
 
       this.transformX = transformX
       this.transformZ = transformZ
-      chartModel.setDomainX(domain)
+      chart.setDomainX(domain)
     })
 
     let mouseDownPoint
-    chartModel.canvas.addEventListener('mousedown', (event: MouseEvent) => {
+    chart.canvas.addEventListener('mousedown', (event: MouseEvent) => {
       const {clientX, clientY} = event
       mouseDownPoint = {clientX: this.transformX + clientX, clientY}
       window.addEventListener('mousemove', onMouseMove)
@@ -78,13 +79,13 @@ export default class Chart extends Component<ChartProps> {
     const onMouseMove = event => {
       const {clientX} = event
       const transformX = -(clientX - mouseDownPoint.clientX)
-      const domain = chartModel.scaleX2
+      const domain = chart.scaleX2
         .copy()
         .domain(
-          chartModel.scaleX2
+          chart.scaleX2
             .range()
             .map(x => (x + transformX) / this.transformZ)
-            .map(chartModel.scaleX2.invert, chartModel.scaleX2)
+            .map(chart.scaleX2.invert, chart.scaleX2)
         )
         .domain()
 
@@ -93,7 +94,7 @@ export default class Chart extends Component<ChartProps> {
       }
 
       this.transformX = transformX
-      chartModel.setDomainX(domain)
+      chart.setDomainX(domain)
     }
 
     this.setState({

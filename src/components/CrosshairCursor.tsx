@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import chartModel from './chartModel'
+import chartModel from '../models/chart'
 
 export default class CrosshairCursor extends Component<{
   anchorsX: Date[]

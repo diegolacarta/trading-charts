@@ -1,4 +1,4 @@
-import {Data} from '../chartModel'
+import {Data} from '../models/types'
 
 export type Options = {
   window: number

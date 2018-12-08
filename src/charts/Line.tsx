@@ -1,18 +1,23 @@
 import {Component, h} from 'preact'
-import chartModel, {Data, OnDraw} from './chartModel'
+import chart from '../models/chart'
+import {Data, OnDraw} from '../models/types'
+
+export type Appearance = {
+  color?: string
+  width?: number
+}
 
 export default class Line extends Component<{
   data: Data[]
   onDraw: OnDraw
   yAccessor: (item) => number
+  appearance?: Appearance
 }> {
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
-  color = 'blue'
-  width = 2
 
   init = () => {
-    chartModel.on('domainChange', this.onDomainChange)
+    chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
 
@@ -25,7 +30,15 @@ export default class Line extends Component<{
   }
 
   clear = () => {
-    this.canvasContext.clearRect(0, 0, chartModel.width, chartModel.height)
+    this.canvasContext.clearRect(0, 0, chart.width, chart.height)
+  }
+
+  get appearance() {
+    return {
+      color: 'blue',
+      width: 2,
+      ...this.props.appearance
+    }
   }
 
   draw = props => {
@@ -37,15 +50,15 @@ export default class Line extends Component<{
     }
 
     const firstItem = plotData[0]
-    const x = chartModel.scaleX(firstItem.date)
-    const y = chartModel.scaleY(this.props.yAccessor(firstItem))
+    const x = chart.scaleX(firstItem.date)
+    const y = chart.scaleY(this.props.yAccessor(firstItem))
     this.canvasContext.beginPath()
-    this.canvasContext.strokeStyle = this.color
-    this.canvasContext.lineWidth = this.width
+    this.canvasContext.strokeStyle = this.appearance.color
+    this.canvasContext.lineWidth = this.appearance.width
     this.canvasContext.moveTo(x, y)
     plotData.forEach(item => {
-      const x = chartModel.scaleX(item.date)
-      const y = chartModel.scaleY(this.props.yAccessor(item))
+      const x = chart.scaleX(item.date)
+      const y = chart.scaleY(this.props.yAccessor(item))
       this.canvasContext.lineTo(x, y)
     })
     this.canvasContext.stroke()
@@ -57,8 +70,8 @@ export default class Line extends Component<{
   }
 
   inRangeX = item => {
-    const x = chartModel.scaleX(item.date)
-    return x >= chartModel.scaleX.range()[0] && x <= chartModel.scaleX.range()[1]
+    const x = chart.scaleX(item.date)
+    return x >= chart.scaleX.range()[0] && x <= chart.scaleX.range()[1]
   }
 
   calculatePlotData = data => {
@@ -83,14 +96,14 @@ export default class Line extends Component<{
   }
 
   componentWillUnmount() {
-    chartModel.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.onDomainChange)
   }
 
   render() {
     return (
       <canvas
-        width={chartModel.width - chartModel.margin.right - 1}
-        height={chartModel.height - chartModel.margin.bottom - 1}
+        width={chart.width - chart.margin.right - 1}
+        height={chart.height - chart.margin.bottom - 1}
         style={{
           position: 'absolute',
           pointerEvents: 'none'

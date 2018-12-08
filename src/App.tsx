@@ -1,11 +1,11 @@
 import {Component, h} from 'preact'
-import AxisX from './AxisX'
-import AxisY from './AxisY'
-import Candlesticks from './Candlesticks'
+import AxisX from './components/AxisX'
+import AxisY from './components/AxisY'
+import Candlesticks from './charts/Candlesticks'
 import Chart from './Chart'
-import CrosshairCursor from './CrosshairCursor'
+import CrosshairCursor from './components/CrosshairCursor'
 import MovingAverage from './indicators/MovingAverage'
-import Line from './Line'
+import Line from './charts/Line'
 
 function round(d) {
   return Math.round(100 * d) / 100
@@ -164,7 +164,10 @@ export default class App extends Component {
           {this.state.chartType === 'line' && (
             <Line data={data.slice()} yAccessor={item => item.close} onDraw={this.onDraw} />
           )}
-          <MovingAverage data={data.slice()} onDraw={this.onDraw} />
+          <MovingAverage data={data.slice()} onDraw={this.onDraw} appearance={{
+            color: 'purple',
+            width: 1
+          }}/>
           <CrosshairCursor anchorsX={data.map(d => d.date)} />
         </Chart>
         <button onClick={this.addPoint}>Add point</button>

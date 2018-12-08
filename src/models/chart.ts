@@ -1,55 +1,8 @@
 import {ScaleLinear, scaleLinear, ScaleTime, scaleTime} from 'd3'
+import EventEmitter from './EventEmitter';
+import { ChartProps } from './types';
 
-export type ChartProps = {
-  width: number
-  height: number
-  domainX: Date[]
-  domainXBounds: Date[]
-  domainY: number[]
-  appearance: {
-    textColor: string
-  }
-}
-
-export type Interval = {
-  date: Date
-  high: number
-  low: number
-  open: number
-  close: number
-}
-
-export type Data = Interval[]
-
-export type OnDraw = (plotData: Data, domainY: [number, number]) => any
-
-class EventEmitter {
-  listeners = {}
-
-  on = (event, listener) => {
-    if (!this.listeners[event]) {
-      this.listeners[event] = []
-    }
-    this.listeners[event].push(listener)
-  }
-
-  off = (event, listener) => {
-    const listeners = this.listeners[event]
-    if (!listeners) {
-      return
-    }
-    listeners.splice(listeners.indexOf(listener), 1)
-  }
-
-  trigger = (event, ...args) => {
-    const listeners = this.listeners[event]
-    if (listeners) {
-      listeners.forEach(listener => listener(...args))
-    }
-  }
-}
-
-class ChartModel extends EventEmitter {
+class Chart extends EventEmitter {
   width: number
   height: number
   canvas: HTMLCanvasElement
@@ -94,4 +47,4 @@ class ChartModel extends EventEmitter {
   }
 }
 
-export default new ChartModel()
+export default new Chart()
