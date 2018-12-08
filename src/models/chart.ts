@@ -17,6 +17,8 @@ class Chart extends EventEmitter {
     bottom: 20
   }
   listeners = {}
+  transformZ = 1
+  transformX = 0
 
   init = (props: ChartProps) => {
     this.height = props.height

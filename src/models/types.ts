@@ -1,3 +1,5 @@
+export type DOMEvent = 'drag' | 'wheel'
+
 export type ChartProps = {
   width: number
   height: number
@@ -6,7 +8,8 @@ export type ChartProps = {
   domainY: number[]
   appearance: {
     textColor: string
-  }
+  },
+  events?: DOMEvent[]
 }
 
 export type Interval = {
