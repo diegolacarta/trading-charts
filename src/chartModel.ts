@@ -11,6 +11,18 @@ export type ChartProps = {
   }
 }
 
+export type Interval = {
+  date: Date
+  high: number
+  low: number
+  open: number
+  close: number
+}
+
+export type Data = Interval[]
+
+export type OnDraw = (plotData: Data, domainY: [number, number]) => any
+
 class EventEmitter {
   listeners = {}
 

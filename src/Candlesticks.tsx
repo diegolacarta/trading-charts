@@ -1,9 +1,9 @@
 import {Component, h} from 'preact'
-import chartModel from './chartModel'
+import chartModel, {OnDraw} from './chartModel'
 
 export default class Candlesticks extends Component<{
   data: any[]
-  onDraw: (plotData) => any
+  onDraw: OnDraw
 }> {
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
@@ -30,7 +30,9 @@ export default class Candlesticks extends Component<{
     this.clear()
     const plotData = this.calculatePlotData(props.data)
     plotData.forEach(this.drawCandlestick(props))
-    this.props.onDraw(plotData)
+    const highs = plotData.map(d => d.high)
+    const lows = plotData.map(d => d.low)
+    this.props.onDraw(plotData, [Math.min(...lows), Math.max(...highs)])
   }
 
   drawCandlestick = props => item => {

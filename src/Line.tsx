@@ -1,9 +1,10 @@
 import {Component, h} from 'preact'
-import chartModel from './chartModel'
+import chartModel, {Data, OnDraw} from './chartModel'
 
 export default class Line extends Component<{
-  data: any[]
-  onDraw: (plotData) => any
+  data: Data[]
+  onDraw: OnDraw
+  yAccessor: (item) => number
 }> {
   canvas: HTMLCanvasElement
   canvasContext: CanvasRenderingContext2D
@@ -37,18 +38,22 @@ export default class Line extends Component<{
 
     const firstItem = plotData[0]
     const x = chartModel.scaleX(firstItem.date)
-    const y = chartModel.scaleY(firstItem.close)
+    const y = chartModel.scaleY(this.props.yAccessor(firstItem))
     this.canvasContext.beginPath()
     this.canvasContext.strokeStyle = this.color
     this.canvasContext.lineWidth = this.width
     this.canvasContext.moveTo(x, y)
     plotData.forEach(item => {
       const x = chartModel.scaleX(item.date)
-      const y = chartModel.scaleY(item.close)
+      const y = chartModel.scaleY(this.props.yAccessor(item))
       this.canvasContext.lineTo(x, y)
     })
     this.canvasContext.stroke()
-    this.props.onDraw(plotData)
+    const values = plotData.map(d => this.props.yAccessor(d))
+    this.props.onDraw(plotData, [
+      Math.min(...values.filter(Number.isFinite)),
+      Math.max(...values.filter(Number.isFinite))
+    ])
   }
 
   inRangeX = item => {

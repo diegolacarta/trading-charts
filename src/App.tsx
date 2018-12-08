@@ -4,6 +4,7 @@ import AxisY from './AxisY'
 import Candlesticks from './Candlesticks'
 import Chart from './Chart'
 import CrosshairCursor from './CrosshairCursor'
+import MovingAverage from './indicators/MovingAverage'
 import Line from './Line'
 
 function round(d) {
@@ -98,7 +99,6 @@ export default class App extends Component {
       data,
       domainXBounds: [data[1].date, data[data.length - 2].date]
     })
-    this.setDomain(data)
   }
 
   setDomain = data => {
@@ -114,14 +114,15 @@ export default class App extends Component {
     })
   }
 
-  onDraw = plotData => {
-    const domainY = [Math.min(...plotData.map(d => d.low)), Math.max(...plotData.map(d => d.high))]
-    if (domainY[0] === this.state.domainY[0] && domainY[1] === this.state.domainY[1]) {
+  onDraw = (plotData, domainY) => {
+    const low = Math.min(domainY[0], this.state.domainY[0])
+    const high = Math.max(domainY[1], this.state.domainY[1])
+    if (low === this.state.domainY[0] && high === this.state.domainY[1]) {
       return
     }
 
     this.setState({
-      domainY: [Math.min(...plotData.map(d => d.low)), Math.max(...plotData.map(d => d.high))]
+      domainY: [low, high]
     })
   }
 
@@ -160,7 +161,10 @@ export default class App extends Component {
           )}
           <AxisY appearance={{textColor: 'black'}} />
           <AxisX appearance={{textColor: 'black'}} />
-          {this.state.chartType === 'line' && <Line data={data.slice()} onDraw={this.onDraw} />}
+          {this.state.chartType === 'line' && (
+            <Line data={data.slice()} yAccessor={item => item.close} onDraw={this.onDraw} />
+          )}
+          <MovingAverage data={data.slice()} onDraw={this.onDraw} />
           <CrosshairCursor anchorsX={data.map(d => d.date)} />
         </Chart>
         <button onClick={this.addPoint}>Add point</button>

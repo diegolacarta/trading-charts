@@ -1,11 +1,6 @@
 import {Component, h} from 'preact'
 import chartModel, {ChartProps} from './chartModel'
 
-const MARGIN = {
-  right: 30,
-  bottom: 20
-}
-
 export default class Chart extends Component<ChartProps> {
   appliedTransform: any
   transformZ = 1
