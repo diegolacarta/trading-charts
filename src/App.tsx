@@ -42,7 +42,7 @@ for (var day = 2; day <= 100; day++) {
   })
 }
 
-const DISPLAY_COUNT = 30
+const DISPLAY_COUNT = 50
 
 export default class App extends Component {
   chartContainer: HTMLDivElement

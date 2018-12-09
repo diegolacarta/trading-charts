@@ -22,6 +22,7 @@ class Chart extends EventEmitter {
   transformZ = 1
   transformX = 0
   fontFamily = 'Menlo'
+  prevProps: ChartProps
 
   setCanvas = (canvas: HTMLCanvasElement) => {
     this.canvas = canvas
@@ -55,9 +56,13 @@ class Chart extends EventEmitter {
       this.scaleX.range([0, props.width - this.margin.right - 1])
       this.scaleX2 = this.scaleX.copy()
     }
+    if (!this.prevProps || this.prevProps.domainX !== props.domainX) {
+      this.setDomainX(props.domainX)
+    }
     if (this.domainY !== props.domainY) {
       this.setDomainY(props.domainY)
     }
+    this.prevProps = props
   }
 }
 
