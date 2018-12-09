@@ -1,11 +1,11 @@
 import {Component, h} from 'preact'
+import Chart from './Chart'
+import Candlesticks from './charts/Candlesticks'
+import Line from './charts/Line'
 import AxisX from './components/AxisX'
 import AxisY from './components/AxisY'
-import Candlesticks from './charts/Candlesticks'
-import Chart from './Chart'
 import CrosshairCursor from './components/CrosshairCursor'
 import MovingAverage from './indicators/MovingAverage'
-import Line from './charts/Line'
 
 function round(d) {
   return Math.round(100 * d) / 100
@@ -45,6 +45,8 @@ for (var day = 2; day <= 100; day++) {
 const DISPLAY_COUNT = 30
 
 export default class App extends Component {
+  chartContainer: HTMLDivElement
+
   state = {
     data,
     chartType: 'candlesticks',
@@ -64,15 +66,10 @@ export default class App extends Component {
   }
 
   setDimensions = () => {
-    this.setState(
-      {
-        height: document.body.clientHeight - 30,
-        width: document.body.clientWidth
-      },
-      () => {
-        this.forceUpdate()
-      }
-    )
+    this.setState({
+      height: this.chartContainer.offsetHeight,
+      width: this.chartContainer.offsetWidth
+    })
   }
 
   addPoint = () => {
@@ -126,50 +123,61 @@ export default class App extends Component {
     })
   }
 
+  onChartContainer = (chartContainer) => {
+    if (chartContainer) {
+      this.chartContainer = chartContainer
+    }
+  }
+
   render() {
     const {data} = this.state
     return (
-      <div>
+      <div className="parent">
         <style
           dangerouslySetInnerHTML={{
             __html: `
-          html {
-            height: 100%;
-          }
-          body {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-        `
+              .parent {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+              }
+              .chartContainer {
+                flex: 1;
+                margin-bottom: 10px;
+              }
+            `
           }}
         />
-        <Chart
-          appearance={{
-            textColor: 'black'
-          }}
-          domainXBounds={this.state.domainXBounds}
-          domainX={this.state.domainX}
-          domainY={this.state.domainY}
-          height={this.state.height}
-          width={this.state.width}
-        >
-          {this.state.chartType === 'candlesticks' && (
-            <Candlesticks data={data.slice()} onDraw={this.onDraw} />
-          )}
-          <AxisY appearance={{textColor: 'black'}} />
-          <AxisX appearance={{textColor: 'black'}} />
-          {this.state.chartType === 'line' && (
-            <Line data={data.slice()} yAccessor={item => item.close} onDraw={this.onDraw} />
-          )}
-          <MovingAverage data={data.slice()} onDraw={this.onDraw} appearance={{
-            color: 'purple',
-            width: 1
-          }}/>
-          <CrosshairCursor anchorsX={data.map(d => d.date)} />
-        </Chart>
+        <div className="chartContainer" ref={this.onChartContainer}>
+          <Chart
+            appearance={{
+              textColor: 'black'
+            }}
+            domainXBounds={this.state.domainXBounds}
+            domainX={this.state.domainX}
+            domainY={this.state.domainY}
+            height={this.state.height}
+            width={this.state.width}
+          >
+            {this.state.chartType === 'candlesticks' && (
+              <Candlesticks data={data.slice()} onDraw={this.onDraw} />
+            )}
+            <AxisY appearance={{textColor: 'black'}} />
+            <AxisX appearance={{textColor: 'black'}} />
+            {this.state.chartType === 'line' && (
+              <Line data={data.slice()} yAccessor={item => item.close} onDraw={this.onDraw} />
+            )}
+            <MovingAverage
+              data={data.slice()}
+              onDraw={this.onDraw}
+              appearance={{
+                color: 'purple',
+                width: 1
+              }}
+            />
+            <CrosshairCursor anchorsX={data.map(d => d.date)} />
+          </Chart>
+        </div>
         <button onClick={this.addPoint}>Add point</button>
         <button onClick={this.setChartType('candlesticks')}>Candlesticks</button>
         <button onClick={this.setChartType('line')}>Line</button>

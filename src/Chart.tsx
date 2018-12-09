@@ -17,6 +17,7 @@ export default class Chart extends Component<ChartProps> {
   }
 
   componentDidMount() {
+    DOMEventListeners.setEvents(this.props.events)
     chart.setProps(this.props)
   }
 
@@ -30,7 +31,6 @@ export default class Chart extends Component<ChartProps> {
 
   onCanvasRef = canvas => {
     chart.setCanvas(canvas)
-    DOMEventListeners.setEvents(this.props.events)
     this.setState({
       initialized: true
     })
@@ -42,7 +42,6 @@ export default class Chart extends Component<ChartProps> {
     return (
       <div
         style={{
-          position: 'relative',
           height,
           width
         }}

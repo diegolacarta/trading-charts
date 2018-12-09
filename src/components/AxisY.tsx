@@ -15,19 +15,15 @@ export default class AxisY extends Component<{
   }
 
   componentDidMount() {
-    chart.on('domainChange', this.onDomainChange)
-    this.draw(this.props)
-  }
-
-  onDomainChange = () => {
-    this.draw(this.props)
+    chart.on('domainChange', this.draw)
+    this.draw()
   }
 
   clear = () => {
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  draw = props => {
+  draw = (props = this.props) => {
     this.clear()
     this.canvasContext.font = `10px ${chart.fontFamily}`
     const ticks = chart.scaleY.ticks(10)
@@ -68,7 +64,7 @@ export default class AxisY extends Component<{
   }
 
   componentWillUnmount() {
-    chart.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.draw)
   }
 
   render() {
@@ -78,6 +74,7 @@ export default class AxisY extends Component<{
         height={chart.height}
         innerRef={this.onCanvasRef}
         style={{position: 'absolute', pointerEvents: 'none'}}
+        onResize={this.draw}
       />
     )
   }

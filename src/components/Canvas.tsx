@@ -3,6 +3,7 @@ import {Component, h, Ref} from 'preact'
 export default class Canvas extends Component<
   {
     innerRef: Ref<HTMLCanvasElement>
+    onResize: () => any
   } & JSX.HTMLAttributes
 > {
   ratio = window.devicePixelRatio
@@ -18,6 +19,7 @@ export default class Canvas extends Component<
   componentDidUpdate(prevProps) {
     if (this.props.height !== prevProps.height || this.props.width !== prevProps.width) {
       this.canvasContext.scale(this.ratio, this.ratio)
+      this.props.onResize()
     }
   }
 

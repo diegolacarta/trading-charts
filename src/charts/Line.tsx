@@ -18,12 +18,8 @@ export default class Line extends Component<{
   canvasContext: CanvasRenderingContext2D
 
   componentDidMount() {
-    chart.on('domainChange', this.onDomainChange)
-    this.draw(this.props)
-  }
-
-  onDomainChange = () => {
-    this.draw(this.props)
+    chart.on('domainChange', this.draw)
+    this.draw()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,7 +38,7 @@ export default class Line extends Component<{
     }
   }
 
-  draw = props => {
+  draw = (props = this.props) => {
     this.clear()
     const plotData = this.calculatePlotData(props.data)
 
@@ -96,7 +92,7 @@ export default class Line extends Component<{
   }
 
   componentWillUnmount() {
-    chart.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.draw)
   }
 
   render() {
@@ -109,6 +105,7 @@ export default class Line extends Component<{
           pointerEvents: 'none'
         }}
         innerRef={this.onRef}
+        onResize={this.draw}
       />
     )
   }

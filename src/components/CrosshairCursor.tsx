@@ -12,6 +12,8 @@ export default class CrosshairCursor extends Component<{
   labelBgColor = 'red'
   labelPadding = 2
   labelTextHeight = this.fontSize - 3
+  x: number
+  y: number
 
   componentDidMount() {
     window.addEventListener('mousemove', this.onMouseMove)
@@ -88,7 +90,9 @@ export default class CrosshairCursor extends Component<{
     )
   }
 
-  draw = (x, y) => {
+  draw = (x = this.x, y = this.y) => {
+    this.x = x
+    this.y = y
     this.canvasContext.setLineDash([5, 3])
     this.canvasContext.font = `${this.fontSize}px ${chart.fontFamily}`
     this.canvasContext.beginPath()
@@ -149,6 +153,7 @@ export default class CrosshairCursor extends Component<{
           pointerEvents: 'none'
         }}
         innerRef={this.onRef}
+        onResize={this.draw}
       />
     )
   }

@@ -12,23 +12,19 @@ export default class Candlesticks extends Component<{
   wickWidth = 2
 
   componentDidMount() {
-    chart.on('domainChange', this.onDomainChange)
-    this.draw(this.props)
+    chart.on('domainChange', this.draw)
+    this.draw()
   }
 
   componentWillReceiveProps(nextProps) {
     this.draw(nextProps)
   }
 
-  onDomainChange = () => {
-    this.draw(this.props)
-  }
-
   clear = () => {
     this.canvasContext.clearRect(0, 0, chart.width, chart.height)
   }
 
-  draw = props => {
+  draw = (props = this.props) => {
     this.clear()
     const plotData = this.calculatePlotData(props.data)
     plotData.forEach(this.drawCandlestick(props))
@@ -80,7 +76,7 @@ export default class Candlesticks extends Component<{
   }
 
   componentWillUnmount() {
-    chart.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.draw)
   }
 
   render() {
@@ -93,6 +89,7 @@ export default class Candlesticks extends Component<{
           pointerEvents: 'none'
         }}
         innerRef={this.onRef}
+        onResize={this.draw}
       />
     )
   }
