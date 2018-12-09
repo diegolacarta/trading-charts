@@ -27,7 +27,6 @@ export default class Chart extends Component<ChartProps> {
     if (this.props.domainX !== nextProps.domainX) {
       chart.setDomainX(nextProps.domainX)
     }
-
     if (this.props.domainY !== nextProps.domainY) {
       chart.setDomainY(nextProps.domainY)
     }

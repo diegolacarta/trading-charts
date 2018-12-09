@@ -40,7 +40,7 @@ export default class AxisX extends Component<{
     )
     canvasContext.strokeStyle = 'black'
     canvasContext.stroke()
-    canvasContext.fillStyle = this.props.appearance.textColor
+    canvasContext.fillStyle = props.appearance.textColor
     canvasContext.textAlign = 'center'
     canvasContext.textBaseline = 'top'
     ticks.forEach(tick => {

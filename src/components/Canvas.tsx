@@ -15,6 +15,12 @@ export default class Canvas extends Component<
     this.canvasContext.scale(this.ratio, this.ratio)
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.height !== prevProps.height || this.props.width !== prevProps.width) {
+      this.canvasContext.scale(this.ratio, this.ratio)
+    }
+  }
+
   onRef = (canvas: HTMLCanvasElement) => {
     if (canvas) {
       this.canvasContext = canvas.getContext('2d')
