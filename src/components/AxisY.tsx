@@ -1,6 +1,6 @@
 import {Component, h} from 'preact'
-import chartModel from '../models/chart'
-import Canvas from './Canvas';
+import chart from '../models/chart'
+import Canvas from './Canvas'
 
 export default class AxisY extends Component<{
   appearance: {
@@ -15,7 +15,7 @@ export default class AxisY extends Component<{
   }
 
   componentDidMount() {
-    chartModel.on('domainChange', this.onDomainChange)
+    chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
 
@@ -27,17 +27,18 @@ export default class AxisY extends Component<{
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  draw = (props) => {
+  draw = props => {
     this.clear()
-    const ticks = chartModel.scaleY.ticks(10)
-    const tickFormat = chartModel.scaleY.tickFormat()
+    this.canvasContext.font = `10px ${chart.fontFamily}`
+    const ticks = chart.scaleY.ticks(10)
+    const tickFormat = chart.scaleY.tickFormat()
     this.canvasContext.beginPath()
     this.canvasContext.fillStyle = 'white'
     this.canvasContext.moveTo(
-      chartModel.width - chartModel.margin.right,
-      chartModel.height - chartModel.margin.bottom + 1
+      chart.width - chart.margin.right,
+      chart.height - chart.margin.bottom + 1
     )
-    this.canvasContext.lineTo(chartModel.width - chartModel.margin.right, 0)
+    this.canvasContext.lineTo(chart.width - chart.margin.right, 0)
     this.canvasContext.strokeStyle = 'black'
     this.canvasContext.stroke()
     this.canvasContext.fillStyle = props.appearance.textColor
@@ -46,18 +47,15 @@ export default class AxisY extends Component<{
     ticks.forEach(tick => {
       this.canvasContext.beginPath()
       this.canvasContext.setLineDash([1, 3])
-      this.canvasContext.moveTo(0, chartModel.scaleY(tick))
-      this.canvasContext.lineTo(
-        chartModel.width - chartModel.margin.right + 3,
-        chartModel.scaleY(tick)
-      )
+      this.canvasContext.moveTo(0, chart.scaleY(tick))
+      this.canvasContext.lineTo(chart.width - chart.margin.right + 3, chart.scaleY(tick))
       this.canvasContext.strokeStyle = 'grey'
       this.canvasContext.stroke()
       this.canvasContext.setLineDash([])
       this.canvasContext.fillText(
         tickFormat(tick),
-        chartModel.width - chartModel.margin.right + 5,
-        chartModel.scaleY(tick)
+        chart.width - chart.margin.right + 5,
+        chart.scaleY(tick)
       )
     })
   }
@@ -70,14 +68,14 @@ export default class AxisY extends Component<{
   }
 
   componentWillUnmount() {
-    chartModel.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.onDomainChange)
   }
 
   render() {
     return (
       <Canvas
-        width={chartModel.width}
-        height={chartModel.height}
+        width={chart.width}
+        height={chart.height}
         innerRef={this.onCanvasRef}
         style={{position: 'absolute', pointerEvents: 'none'}}
       />

@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import chartModel from '../models/chart'
+import chart from '../models/chart'
 import Canvas from './Canvas'
 
 export default class AxisX extends Component<{
@@ -15,7 +15,7 @@ export default class AxisX extends Component<{
   }
 
   componentDidMount() {
-    chartModel.on('domainChange', this.onDomainChange)
+    chart.on('domainChange', this.onDomainChange)
     this.draw(this.props)
   }
 
@@ -29,14 +29,15 @@ export default class AxisX extends Component<{
 
   draw = props => {
     this.clear()
-    const ticks = chartModel.scaleX.ticks(10)
-    const tickFormat = chartModel.scaleX.tickFormat()
+    this.canvasContext.font = `10px ${chart.fontFamily}`
+    const ticks = chart.scaleX.ticks(10)
+    const tickFormat = chart.scaleX.tickFormat()
     const {canvasContext} = this
     canvasContext.beginPath()
-    canvasContext.moveTo(0, chartModel.height - chartModel.margin.bottom)
+    canvasContext.moveTo(0, chart.height - chart.margin.bottom)
     canvasContext.lineTo(
-      chartModel.width - chartModel.margin.right,
-      chartModel.height - chartModel.margin.bottom
+      chart.width - chart.margin.right,
+      chart.height - chart.margin.bottom
     )
     canvasContext.strokeStyle = 'black'
     canvasContext.stroke()
@@ -47,17 +48,17 @@ export default class AxisX extends Component<{
       canvasContext.beginPath()
       canvasContext.setLineDash([1, 3])
       canvasContext.moveTo(
-        chartModel.scaleX(tick),
-        chartModel.height - chartModel.margin.bottom + 3
+        chart.scaleX(tick),
+        chart.height - chart.margin.bottom + 3
       )
-      canvasContext.lineTo(chartModel.scaleX(tick), 0)
+      canvasContext.lineTo(chart.scaleX(tick), 0)
       canvasContext.strokeStyle = 'grey'
       canvasContext.stroke()
       canvasContext.setLineDash([])
       canvasContext.fillText(
         tickFormat(tick),
-        chartModel.scaleX(tick),
-        chartModel.height - chartModel.margin.bottom + 5
+        chart.scaleX(tick),
+        chart.height - chart.margin.bottom + 5
       )
     })
   }
@@ -70,14 +71,14 @@ export default class AxisX extends Component<{
   }
 
   componentWillUnmount() {
-    chartModel.off('domainChange', this.onDomainChange)
+    chart.off('domainChange', this.onDomainChange)
   }
 
   render() {
     return (
       <Canvas
-        width={chartModel.width}
-        height={chartModel.height}
+        width={chart.width}
+        height={chart.height}
         innerRef={this.onCanvasRef}
         style={{position: 'absolute', pointerEvents: 'none'}}
       />

@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import chartModel from '../models/chart'
+import chart from '../models/chart'
 import Canvas from './Canvas'
 
 export default class CrosshairCursor extends Component<{
@@ -14,17 +14,15 @@ export default class CrosshairCursor extends Component<{
   labelTextHeight = this.fontSize - 3
 
   componentDidMount() {
-    this.canvasContext.setLineDash([5, 3])
-    this.canvasContext.font = `${this.fontSize}px Arial`
     window.addEventListener('mousemove', this.onMouseMove)
   }
 
   clear = () => {
-    this.canvasContext.clearRect(0, 0, chartModel.width, chartModel.height)
+    this.canvasContext.clearRect(0, 0, chart.width, chart.height)
   }
 
   drawCrosshairY = x => {
-    this.canvasContext.moveTo(x, chartModel.height - chartModel.margin.bottom)
+    this.canvasContext.moveTo(x, chart.height - chart.margin.bottom)
     this.canvasContext.lineTo(x, 0)
     this.canvasContext.strokeStyle = 'black'
     this.canvasContext.stroke()
@@ -32,7 +30,7 @@ export default class CrosshairCursor extends Component<{
 
   drawCrosshairX = y => {
     this.canvasContext.moveTo(0, y)
-    this.canvasContext.lineTo(chartModel.width - chartModel.margin.right, y)
+    this.canvasContext.lineTo(chart.width - chart.margin.right, y)
     this.canvasContext.stroke()
   }
 
@@ -43,12 +41,12 @@ export default class CrosshairCursor extends Component<{
 
   drawLabelX = x => {
     this.canvasContext.fillStyle = this.labelBgColor
-    const date = chartModel.scaleX.invert(x)
+    const date = chart.scaleX.invert(x)
     const labelXText = date.toLocaleString()
     const labelXWidth = this.canvasContext.measureText(labelXText).width + this.labelPadding * 2
     this.canvasContext.fillRect(
       x - labelXWidth / 2,
-      chartModel.height - chartModel.margin.bottom + 1,
+      chart.height - chart.margin.bottom + 1,
       labelXWidth,
       this.labelTextHeight + this.labelPadding * 2
     )
@@ -57,17 +55,17 @@ export default class CrosshairCursor extends Component<{
     this.canvasContext.fillText(
       labelXText,
       x,
-      chartModel.height - chartModel.margin.bottom + this.labelTextHeight + this.labelPadding + 1
+      chart.height - chart.margin.bottom + this.labelTextHeight + this.labelPadding + 1
     )
   }
 
   drawLabelY = y => {
     this.canvasContext.fillStyle = this.labelBgColor
-    const labelYText = chartModel.scaleY.invert(y).toFixed(1)
+    const labelYText = chart.scaleY.invert(y).toFixed(1)
     const labelYWidth = this.canvasContext.measureText(labelYText).width + this.labelPadding * 2
     const labelYHeight = this.labelTextHeight + this.labelPadding * 2
     this.canvasContext.fillRect(
-      chartModel.width - chartModel.margin.right + 1,
+      chart.width - chart.margin.right + 1,
       y - labelYHeight / 2,
       labelYWidth,
       labelYHeight
@@ -76,7 +74,7 @@ export default class CrosshairCursor extends Component<{
     this.canvasContext.textAlign = 'left'
     this.canvasContext.fillText(
       labelYText,
-      chartModel.width - chartModel.margin.right + 1 + this.labelPadding,
+      chart.width - chart.margin.right + 1 + this.labelPadding,
       y + this.labelTextHeight / 2
     )
   }
@@ -84,13 +82,15 @@ export default class CrosshairCursor extends Component<{
   isOutOfBounds = (x, y = 0) => {
     return (
       x < 0 ||
-      x > chartModel.width - chartModel.margin.right ||
+      x > chart.width - chart.margin.right ||
       y < 0 ||
-      y > chartModel.height - chartModel.margin.bottom
+      y > chart.height - chart.margin.bottom
     )
   }
 
   draw = (x, y) => {
+    this.canvasContext.setLineDash([5, 3])
+    this.canvasContext.font = `${this.fontSize}px ${chart.fontFamily}`
     this.canvasContext.beginPath()
     this.drawCrosshair(x, y)
     this.drawLabelX(x)
@@ -108,7 +108,7 @@ export default class CrosshairCursor extends Component<{
     let closestAnchorX
     let distanceToClosestAnchor
     this.props.anchorsX.forEach(anchor => {
-      const anchorX = chartModel.scaleX(anchor)
+      const anchorX = chart.scaleX(anchor)
       const distance = Math.abs(anchorX - x)
       if (
         !this.isOutOfBounds(anchorX) &&
@@ -125,7 +125,7 @@ export default class CrosshairCursor extends Component<{
   onMouseMove = (event: MouseEvent) => {
     const {pageX, pageY} = event
     this.clear()
-    const {left, top} = chartModel.canvas.getBoundingClientRect()
+    const {left, top} = chart.canvas.getBoundingClientRect()
     const x = pageX - left
     const y = pageY - top
     if (this.isOutOfBounds(x, y)) {
@@ -142,8 +142,8 @@ export default class CrosshairCursor extends Component<{
   render() {
     return (
       <Canvas
-        width={chartModel.width}
-        height={chartModel.height}
+        width={chart.width}
+        height={chart.height}
         style={{
           position: 'absolute',
           pointerEvents: 'none'

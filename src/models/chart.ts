@@ -15,12 +15,13 @@ class Chart extends EventEmitter {
   domainX: Date[]
   domainY: number[]
   margin = {
-    right: 40,
+    right: 50,
     bottom: 20
   }
   listeners = {}
   transformZ = 1
   transformX = 0
+  fontFamily = 'Menlo'
 
   setCanvas = (canvas: HTMLCanvasElement) => {
     this.canvas = canvas
