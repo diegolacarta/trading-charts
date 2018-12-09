@@ -55,9 +55,6 @@ class Chart extends EventEmitter {
       this.scaleX.range([0, props.width - this.margin.right - 1])
       this.scaleX2 = this.scaleX.copy()
     }
-    if (this.domainX !== props.domainX) {
-      this.setDomainX(props.domainX)
-    }
     if (this.domainY !== props.domainY) {
       this.setDomainY(props.domainY)
     }
