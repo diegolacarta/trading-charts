@@ -20,7 +20,7 @@
     "webpack-dev-server": "3.1.4"
   },
   "dependencies": {
-    "d3": "5.4.0",
+    "d3": "7.6.1",
     "preact": "8.4.2"
   }
 }
